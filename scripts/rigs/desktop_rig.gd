@@ -9,6 +9,7 @@ const MOVE_SPEED := 1.8
 const PUNCH_TIME := 0.3
 const HEAD_FROM_EYES := Vector3(0, -0.03, 0.08)
 
+var hints := {"back": "Hold Esc", "guard": "Hold Space"}
 var camera := Camera3D.new()
 var _punch_t: Array[float] = [-1.0, -1.0]
 var _punch_low: Array[bool] = [false, false]

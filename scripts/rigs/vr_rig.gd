@@ -8,6 +8,7 @@ const MOVE_SPEED := 1.8
 const SNAP_TURN := PI / 4
 const HEAD_FROM_EYES := Vector3(0, -0.03, 0.08)  # head centre sits behind and below the eyes
 
+var hints := {"back": "Hold B or Y", "guard": "Hold both gloves up by your face"}
 var camera := XRCamera3D.new()
 var hands: Array[XRController3D] = []
 var _turn_ready := true

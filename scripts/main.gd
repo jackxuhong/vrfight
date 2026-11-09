@@ -35,6 +35,7 @@ var _practice := {}
 var _hud_t := 0.0
 var _flash := 0.0
 var _down := false
+var _got_up := false  # I'm down but have already got up; waiting for the count to reach 8
 var _guard_t := 0.0
 var _back_t := 0.0
 var _end_t := -1.0
@@ -165,6 +166,7 @@ func _start(m: Mode) -> void:
 	if settings.bot_vs_bot:
 		autopilot = BotBrain.new(mine, foe, settings.bot_skill)
 		mine.set_body_visible(true)
+	_hud("Guard: %s\nBack to lobby: %s" % [rig.hints.guard, rig.hints.back], 3.0)
 	match m:
 		Mode.PRACTICE:
 			dummy = DummyBrain.new(foe, Vector3(0, 0, -0.2), settings.dummy_sway)
@@ -310,13 +312,15 @@ func _detect_hits(mine: Fighter, foe: Fighter) -> void:
 
 
 func _check_recovery(dt: float) -> void:
-	if autopilot or not _down:
+	if autopilot or not _down or _got_up:
 		_guard_t = 0.0
 		return
 	_guard_t = _guard_t + dt if rig.guard_up() else 0.0
 	if _guard_t >= RECOVER_HOLD:
 		_guard_t = 0.0
+		_got_up = true
 		_recover(me)
+		_hud("YOU'RE UP\nBoxing resumes at 8", 1.1)
 
 
 func _recover(f: int) -> void:
@@ -362,12 +366,16 @@ func _on_match_event(what: String, d: Dictionary) -> void:
 		"knockdown":
 			var f := int(d.fighter)
 			_down = f == me
-			_hud("YOU'RE DOWN!\nHold your guard up to get up" if _down else "KNOCKDOWN!", 3.0)
+			_got_up = false
+			_hud("YOU'RE DOWN!\nTo get up: %s" % rig.hints.guard if _down else "KNOCKDOWN!", 1.1)
 			var brain := _brain_of(f)
 			if brain:
 				brain.on_knockdown(int(d.total))
 		"count":
-			_hud(str(d.count), 1.0)
+			var text := str(d.count)
+			if _down:  # the count would otherwise hide how to get up
+				text += "\nUp - boxing resumes at 8" if _got_up else "\nTo get up: %s" % rig.hints.guard
+			_hud(text, 1.1)
 			var brain := _brain_of(int(d.fighter))
 			if brain and int(d.count) >= brain.recover_at:
 				_recover(int(d.fighter))
@@ -389,6 +397,7 @@ func _on_match_event(what: String, d: Dictionary) -> void:
 
 func _up() -> void:
 	_down = false
+	_got_up = false
 	for b in [bot, autopilot]:
 		if b:
 			b.down = false
@@ -512,6 +521,8 @@ func _update_board() -> void:
 
 
 func _board(text: String) -> void:
+	if mode != Mode.LOBBY:
+		text += "\n%s: back to lobby" % rig.hints.back
 	for b in boards:
 		if b.text != text:
 			b.text = text
