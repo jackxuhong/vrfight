@@ -8,8 +8,8 @@ A VR boxing game that follows pro boxing rules. Three modes:
 | **Single Player** | A full match against a bot that moves, guards, throws combos, blocks and slips. |
 | **LAN** | Two players on the same network. One hosts; the other joins automatically. |
 
-Headsets: **Oculus Rift**, and **Quest 2 through Link or Air Link** (PC VR). A standalone Quest
-build is not set up yet.
+Headsets: **Oculus Rift**, **Quest 2 through Link or Air Link** (PC VR), and **Quest 2
+standalone** (a sideloaded APK).
 
 Built with **Godot 4.7** (OpenXR). Everything you see and hear is generated in code, with no
 asset files.
@@ -22,6 +22,31 @@ asset files.
    `godot --path .` from this folder.
 3. **Without a headset:** `godot --path . --xr-mode off`
    (`--xr-mode off` matters: with no headset connected, the OpenXR runtime can hang startup.)
+
+## Standalone Quest 2
+
+One-time setup:
+
+1. Turn on **Developer Mode** for the headset in the Meta Horizon phone app (it needs a free Meta
+   developer organization).
+2. Install **JDK 17** (`winget install Microsoft.OpenJDK.17`), the **Android SDK** command-line
+   tools with `platform-tools`, `build-tools;36.1.0` and `platforms;android-36`, and the Godot
+   **4.7.2 export templates**. In Godot, set *Editor Settings → Export → Android* to the JDK and
+   SDK folders.
+
+Build and install with the headset plugged in over USB and worn, after accepting "Allow USB
+debugging":
+
+```bash
+GODOT=/path/to/Godot_v4.7.2-stable_win64_console.exe bash tests/export_quest.sh
+```
+
+That writes `build/vrfight-quest.apk`, installs it and starts it. After that it's in the
+headset's library under **Unknown Sources**. Pass `--no-install` to only build. Logs:
+`adb logcat -s godot`.
+
+For a LAN match between a Quest and a PC, **host on the Quest** and join from the PC (see Known
+limits in `docs/DESIGN.md`).
 
 ## Controls
 
@@ -88,6 +113,6 @@ Other launch options for testing: `--mode=practice|bot|host|join` (skip the lobb
 
 ## Not built yet
 
-Standalone Quest APK · internet matchmaking · full-body avatars · real art and audio assets ·
+Internet matchmaking · full-body avatars · real art and audio assets ·
 in-game settings menu · bot difficulty presets · crowd sound · referee figure · stamina ·
 clinch/break.

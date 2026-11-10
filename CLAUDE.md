@@ -2,15 +2,15 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-VR boxing game in **Godot 4.7 (GDScript, OpenXR, GL Compatibility renderer)** for Oculus Rift and
-Quest 2 over Link (PC VR). It has three modes: practice vs a dummy, a match vs a bot, and 2-player
+VR boxing game in **Godot 4.7 (GDScript, OpenXR, GL Compatibility renderer)** for Oculus Rift,
+Quest 2 over Link (PC VR), and standalone Quest 2 (Android APK). It has three modes: practice vs a dummy, a match vs a bot, and 2-player
 LAN. There are no asset files: the arena, meshes and sounds are all generated in code. Player docs
 are in `README.md`; architecture is in `docs/DESIGN.md`, which should be updated along with the code.
 
 ## Commands
 
-Godot is not on PATH. Use the **console** build (`Godot_v4.7.2-stable_win64_console.exe`) so output
-reaches the terminal.
+Godot is not on PATH; it's in `~/Tools/godot/`. Use the **console** build
+(`Godot_v4.7.2-stable_win64_console.exe`) so output reaches the terminal.
 
 **Always pass `--xr-mode off` when running without a headset**, including headless runs and
 `--import`. Otherwise the Oculus OpenXR runtime hangs startup indefinitely.
@@ -35,6 +35,11 @@ A test file runs only if `run.sh` lists it in its `for t in rules hits` loop.
 Game options come from `settings.cfg` and can be overridden after `--` as `--key=value`; dashes
 become underscores (see `scripts/core/config.gd`). The launch-only keys are `mode`, `join`,
 `bot_vs_bot`, `timescale` and `quit_on_end`.
+
+`GODOT=... bash tests/export_quest.sh` builds the standalone Quest APK and installs it with adb. It
+uses the "Quest" export preset, a Gradle build and the Khronos OpenXR loader. `android/` is the
+generated build template; it's gitignored and the script reinstalls it. The JDK and Android SDK
+paths are set in Godot's editor settings.
 
 To check visuals without a headset, render frames with
 `--xr-mode off --write-movie out.png --fixed-fps 30 --quit-after N`.

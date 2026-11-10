@@ -67,8 +67,13 @@ func _ready() -> void:
 	if xr and xr.is_initialized():
 		get_viewport().use_xr = true
 		DisplayServer.window_set_vsync_mode(DisplayServer.VSYNC_DISABLED)  # the headset paces frames
-		if xr.get_display_refresh_rate() > 0.0:
-			Engine.physics_ticks_per_second = roundi(xr.get_display_refresh_rate())
+		xr.refresh_rate_changed.connect(func(hz: float):  # one physics tick per displayed frame
+			Engine.physics_ticks_per_second = roundi(hz)
+			print("XR refresh %s Hz" % hz))
+		xr.session_begun.connect(func():  # refresh rates are only known once the session runs
+			print("XR refresh rates offered: %s" % xr.get_available_display_refresh_rates())
+			if 90.0 in xr.get_available_display_refresh_rates():
+				xr.display_refresh_rate = 90.0)  # Quest 2 starts at 72; hit speeds are tuned for 90 Hz
 		rig = VrRig.new()
 	else:
 		rig = DesktopRig.new()

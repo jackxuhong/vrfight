@@ -1,6 +1,6 @@
 class_name VrRig
 extends XROrigin3D
-## The player in VR: headset plus Touch controllers (Rift, or Quest 2 over Link).
+## The player in VR: headset plus Touch controllers (Rift, Quest 2 over Link, or standalone Quest 2).
 ## Left stick walks, right stick snap-turns, B or Y held returns to the lobby.
 ## DesktopRig has the same methods, so the rest of the game doesn't care which one it has.
 

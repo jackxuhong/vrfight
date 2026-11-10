@@ -112,3 +112,9 @@ tests/                 unit tests and run.sh (all headless checks)
 - The bot's gloves pass through its target's head instead of stopping on contact.
 - On Windows, a broadcast from one process should reach a listener in another on the same PC (the
   test suite relies on this). Some routers and networks block broadcast; use `--join` there.
+- On a standalone Quest, Android may drop incoming broadcasts, because GDScript can't take the
+  multicast lock. So the Quest may not find a PC host; host on the Quest instead, since sending
+  broadcasts works. The Quest also has no command line (so no `--join`), and `settings.cfg` is
+  baked into the APK.
+- The Quest APK is a debug build signed with Godot's debug keystore and uses Godot's default
+  icon. That's fine for sideloading but not for a store.
